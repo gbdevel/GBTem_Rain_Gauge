@@ -1,0 +1,36 @@
+server:
+  port: 14082
+
+spring:
+  datasource:
+    url: jdbc:mariadb://gb-gblite-dev-rds.cww5ax3bcsku.ap-northeast-2.rds.amazonaws.com:3306/GBTEM
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: gbadmin
+    password: wlqlthvmxm1!
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDB106Dialect
+    hibernate:
+      ddl-auto: none
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl #DB?
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true #
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate:
+      type:
+        descriptor.sql: trace
+
+
+dlInterface:
+  auth_url: https://apitest.dlenc.co.kr/dgw20-30/oauth/create
+  client_id: 7d44f21066a68985
+  client_secret: ed5a2b0f83b37ea00cd977c8b5d8d5294ce33f08777bc76b9a4666e5d81ef191
+  transmit_url: https://apitest.dlenc.co.kr/dgw20-30/400067

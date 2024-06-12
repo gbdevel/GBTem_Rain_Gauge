@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/GBTEM
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: 1234
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDB106Dialect
+    hibernate:
+      ddl-auto: none
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl #DB?
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true #
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    sql: ERROR 
+    org.hibernate: 
+      SQL: ERROR
+      type:
+        descriptor.sql: trace
+    org.springframework.web: debug
+
+
+dlInterface:
+  auth_url: https://apitest.dlenc.co.kr/dgw20-30/oauth/create
+  client_id: 7d44f21066a68985
+  client_secret: ed5a2b0f83b37ea00cd977c8b5d8d5294ce33f08777bc76b9a4666e5d81ef191
+  transmit_url: https://apitest.dlenc.co.kr/dgw20-30/400067
