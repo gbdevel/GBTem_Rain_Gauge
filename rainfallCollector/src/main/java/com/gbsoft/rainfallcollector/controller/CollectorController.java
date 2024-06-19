@@ -53,7 +53,7 @@ import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequestMapping("/test")
+@RequestMapping("/raingauge")
 @RestController
 @RequiredArgsConstructor
 public class CollectorController {
