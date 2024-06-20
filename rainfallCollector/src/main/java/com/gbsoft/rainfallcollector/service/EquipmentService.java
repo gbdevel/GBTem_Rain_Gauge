@@ -52,7 +52,7 @@ public class EquipmentService {
 		
 		
 		EquipByCust equipByCust = equipByCustRepository
-				.findByEquipUuidAndMacaddressAndEcEndDtGreaterThanEqualAndUseYn(rebootEquipmentRequest.getEguipUuid(),rebootEquipmentRequest.getMacaddress(),localDate,"Y")
+				.findByEquipUuidAndMacaddressAndEcEndDtGreaterThanEqualAndUseYn(rebootEquipmentRequest.getEquipUuid(),rebootEquipmentRequest.getMacaddress(),localDate,"Y")
 			.orElseThrow(TerminalNotFoundException::new);
 
 		return equipByCust;

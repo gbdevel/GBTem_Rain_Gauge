@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class RebootEquipmentRequest {
 
 	@NotNull(message = "필수값 입니다.")
-	private String eguipUuid;
+	private String equipUuid;
 
 	@NotNull(message = "필수값 입니다.")
 	private String startDatetime;
