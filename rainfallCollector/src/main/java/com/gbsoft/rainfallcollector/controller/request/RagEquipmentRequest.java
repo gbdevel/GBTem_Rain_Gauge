@@ -19,4 +19,6 @@ public class RagEquipmentRequest {
 	@NotNull(message = "필수값 입니다.")
 	private String equipType;
 	
+	private String equipName;
+	
 }

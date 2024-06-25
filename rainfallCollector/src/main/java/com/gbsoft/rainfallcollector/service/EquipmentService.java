@@ -77,6 +77,7 @@ public class EquipmentService {
 										.equipUuid(equipUuid)
 										.macAddress(ragEquipmentRequest.getMacAddress())
 										.equipType(ragEquipmentRequest.getEquipType())
+										.equipName(ragEquipmentRequest.getEquipName())
 										.useYn("Y")
 										.build())
 							);
