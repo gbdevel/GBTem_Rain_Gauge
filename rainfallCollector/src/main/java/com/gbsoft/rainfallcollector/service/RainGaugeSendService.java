@@ -230,7 +230,7 @@ public class RainGaugeSendService {
 				.rainSendDt(localDateTime)
 				.onSiteCode(number)
 				.raingaugeSendDate(rainGauge)
-				.build()
+				.build() 
 				 );
 				
 		return sendDl.getRainSendLogdateSeq();
