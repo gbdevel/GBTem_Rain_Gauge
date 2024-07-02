@@ -48,7 +48,7 @@ public class EquipInstLocation extends BaseEntity{
 	private Long equipByCustSeq;
 	
 	@Column(name = "ONSITE_CODE")
-	private String onsiteCode;
+	private String onSiteCode;
 	
 	@Column(name = "INST_LOC_1")
 	private String instLoc1;

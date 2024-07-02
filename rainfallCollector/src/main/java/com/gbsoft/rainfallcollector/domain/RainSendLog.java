@@ -39,7 +39,7 @@ public class RainSendLog extends BaseEntity {
 	private LocalDateTime rainSendDt;
 	
 	@Column(name = "ONSITE_CODE")
-	private String onsiteCode;
+	private String onSiteCode;
 	
 	@Column(name = "RAINGAUGE_SEND_DATE")
 	private Double raingaugeSendDate;

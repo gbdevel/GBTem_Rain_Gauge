@@ -7,16 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gbsoft.rainfallcollector.controller.request.RainRecvDateRequest;
-import com.gbsoft.rainfallcollector.controller.request.SaveRainfallDataRequest;
 import com.gbsoft.rainfallcollector.domain.EquipInstLocation;
-import com.gbsoft.rainfallcollector.domain.Equipment;
-import com.gbsoft.rainfallcollector.domain.RainFall;
 import com.gbsoft.rainfallcollector.domain.RainRecvDate;
-import com.gbsoft.rainfallcollector.domain.Terminal;
 import com.gbsoft.rainfallcollector.exception.OnSiteNotFoundException;
-import com.gbsoft.rainfallcollector.exception.TerminalNotFoundException;
 import com.gbsoft.rainfallcollector.repository.EquipmentInstLocRepository;
-import com.gbsoft.rainfallcollector.repository.EquipmentRepository;
 import com.gbsoft.rainfallcollector.repository.RainRecvDateRepository;
 import com.gbsoft.rainfallcollector.util.DateUtil;
 
@@ -28,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RainGaugeService {
 
-	
 	private final RainRecvDateRepository rainRecvDateRepository;
 
 	private final EquipmentInstLocRepository equipmentInstLocRepository;
@@ -45,7 +38,7 @@ public class RainGaugeService {
 		
 		EquipInstLocation equipInstLocation = equipmentInstLocRepository
 				.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYn(rainRecvDateRequest.getEquipUuid(), localDate, "Y")
-			.orElseThrow(OnSiteNotFoundException::new);
+				.orElseThrow(OnSiteNotFoundException::new);
 			
 		LocalDateTime localDateTime = DateUtil.stringToLocalDateTime(rainRecvDateRequest.getRainGaugeSendDate());
 

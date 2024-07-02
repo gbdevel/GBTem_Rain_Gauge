@@ -106,7 +106,7 @@ public class RainGaugeSendService {
 			String uri = makeUri(transmitUrl);
 
 			String stringFormatNowDatetime = DateUtil.localDateTimeToString(LocalDateTime.now());
-			Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getOnsiteCode(), rainGauge);
+			Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getOnSiteCode(), rainGauge);
 
 //			log.info("build : {}", build);
 			Map<String, String> map = new HashMap<>();
@@ -114,7 +114,7 @@ public class RainGaugeSendService {
 			map.put("P_DNT_MSMT", stringFormatNowDatetime);
 			map.put("P_NO_SEQ", String.valueOf(logingId));
 			map.put("P_QT_RAF", String.valueOf(rainGauge));
-			map.put("P_CD_SITE", equipment.getOnsiteCode());
+			map.put("P_CD_SITE", equipment.getOnSiteCode());
 			HttpEntity request = makeTransmitHttpEntity(map, token);
 
 			ResponseEntity<ResponseBodyDto> response = restTemplate.postForEntity(uri, request, ResponseBodyDto.class);
@@ -149,7 +149,7 @@ public class RainGaugeSendService {
 			LocalDateTime now = LocalDateTime.now().minusMinutes(2);
 			LocalDateTime target = now.minusMinutes(7);
 			
-			Optional<EquipInstLocation> equipInstLocation = equipmentInstLocRepository.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYn(equipement.getEquipUuid(), today, "Y");
+			Optional<EquipInstLocation> equipInstLocation = equipmentInstLocRepository.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYnAndOnSiteCodeIsNotNull(equipement.getEquipUuid(), today, "Y");
 			
 			if(!equipInstLocation.isPresent()) {
 				continue;
@@ -228,10 +228,10 @@ public class RainGaugeSendService {
 				RainSendLog.builder()
 				.equipUuid(equipUuid)
 				.rainSendDt(localDateTime)
-				.onsiteCode(number)
+				.onSiteCode(number)
 				.raingaugeSendDate(rainGauge)
 				.build()
-				);
+				 );
 				
 		return sendDl.getRainSendLogdateSeq();
 	}

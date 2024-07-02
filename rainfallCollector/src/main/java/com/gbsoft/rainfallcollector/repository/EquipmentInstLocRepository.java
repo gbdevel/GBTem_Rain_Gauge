@@ -14,4 +14,6 @@ public interface EquipmentInstLocRepository extends JpaRepository<EquipInstLocat
 	
 	Optional<EquipInstLocation> findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYn(String equipUuid, LocalDate localDt, String UseYn);
 	
+	Optional<EquipInstLocation> findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYnAndOnSiteCodeIsNotNull(String equipUuid, LocalDate localDt, String UseYn);
+
 }
