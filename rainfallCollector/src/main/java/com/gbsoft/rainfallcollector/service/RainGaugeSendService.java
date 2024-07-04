@@ -104,24 +104,26 @@ public class RainGaugeSendService {
 			RestTemplate restTemplate = generateRestTemplate();
 			String uri = makeUri(transmitUrl);
 			String stringFormatNowDatetime = DateUtil.localDateTimeToString(LocalDateTime.now());
-			Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getSiteInfoIdx().getSiteCd(), rainGauge);
-
-//			log.info("build : {}", build);
-			Map<String, String> map = new HashMap<>();
-			map.put("P_CD_RAF_EQPT", equipment.getEquipUuid());
-			map.put("P_DNT_MSMT", stringFormatNowDatetime);
-			map.put("P_NO_SEQ", String.valueOf(logingId));
-			map.put("P_QT_RAF", String.valueOf(rainGauge));
-			map.put("P_CD_SITE", equipment.getSiteInfoIdx().getSiteCd());
-			HttpEntity request = makeTransmitHttpEntity(map, token);
-
-			ResponseEntity<ResponseBodyDto> response = restTemplate.postForEntity(uri, request, ResponseBodyDto.class);
-
-			checkTransmitLogSuccess(logingId);
-
-			makeResultMap(response);
-
-
+			
+			if(!equipment.getSiteInfoIdx().getSiteCd().isEmpty()) {
+				
+				Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getSiteInfoIdx().getSiteCd(), rainGauge);
+	
+	//			log.info("build : {}", build);
+				Map<String, String> map = new HashMap<>();
+				map.put("P_CD_RAF_EQPT", equipment.getEquipUuid());
+				map.put("P_DNT_MSMT", stringFormatNowDatetime);
+				map.put("P_NO_SEQ", String.valueOf(logingId));
+				map.put("P_QT_RAF", String.valueOf(rainGauge));
+				map.put("P_CD_SITE", equipment.getSiteInfoIdx().getSiteCd());
+				HttpEntity request = makeTransmitHttpEntity(map, token);
+	
+				ResponseEntity<ResponseBodyDto> response = restTemplate.postForEntity(uri, request, ResponseBodyDto.class);
+	
+				checkTransmitLogSuccess(logingId);
+	
+				makeResultMap(response);
+			}
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode().value() == HttpStatus.SC_UNAUTHORIZED) {
 				String accessToken = authDL();
