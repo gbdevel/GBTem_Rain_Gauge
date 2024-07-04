@@ -33,10 +33,9 @@ import com.gbsoft.rainfallcollector.controller.request.DLAuthRequest;
 import com.gbsoft.rainfallcollector.controller.request.DLTransmitRequest;
 import com.gbsoft.rainfallcollector.domain.EquipByCust;
 import com.gbsoft.rainfallcollector.domain.EquipInstLocation;
+import com.gbsoft.rainfallcollector.domain.Onsiteinfo;
 import com.gbsoft.rainfallcollector.domain.RainRecvDate;
 import com.gbsoft.rainfallcollector.domain.RainSendLog;
-import com.gbsoft.rainfallcollector.domain.Terminal;
-import com.gbsoft.rainfallcollector.exception.OnSiteNotFoundException;
 import com.gbsoft.rainfallcollector.repository.EquipByCustRepository;
 import com.gbsoft.rainfallcollector.repository.EquipmentInstLocRepository;
 import com.gbsoft.rainfallcollector.repository.RainRecvDateRepository;
@@ -104,9 +103,8 @@ public class RainGaugeSendService {
 
 			RestTemplate restTemplate = generateRestTemplate();
 			String uri = makeUri(transmitUrl);
-
 			String stringFormatNowDatetime = DateUtil.localDateTimeToString(LocalDateTime.now());
-			Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getOnSiteCode(), rainGauge);
+			Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getSiteInfoIdx().getSiteCd(), rainGauge);
 
 //			log.info("build : {}", build);
 			Map<String, String> map = new HashMap<>();
@@ -114,7 +112,7 @@ public class RainGaugeSendService {
 			map.put("P_DNT_MSMT", stringFormatNowDatetime);
 			map.put("P_NO_SEQ", String.valueOf(logingId));
 			map.put("P_QT_RAF", String.valueOf(rainGauge));
-			map.put("P_CD_SITE", equipment.getOnSiteCode());
+			map.put("P_CD_SITE", equipment.getSiteInfoIdx().getSiteCd());
 			HttpEntity request = makeTransmitHttpEntity(map, token);
 
 			ResponseEntity<ResponseBodyDto> response = restTemplate.postForEntity(uri, request, ResponseBodyDto.class);
@@ -149,12 +147,12 @@ public class RainGaugeSendService {
 			LocalDateTime now = LocalDateTime.now().minusMinutes(2);
 			LocalDateTime target = now.minusMinutes(7);
 			
-			Optional<EquipInstLocation> equipInstLocation = equipmentInstLocRepository.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYnAndOnSiteCodeIsNotNull(equipement.getEquipUuid(), today, "Y");
+			Optional<EquipInstLocation> equipInstLocation =  equipmentInstLocRepository.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYn(equipement.getEquipUuid(), today, "Y");
 			
 			if(!equipInstLocation.isPresent()) {
 				continue;
 			}
-
+			
 			EquipInstLocation equipInstLoc = equipInstLocation.get();
 			
 			List<RainRecvDate> list = rainRecvDateRepository.findByEquipUuidAndSiteInfoIdxAndRainRecvDtBetween(equipInstLoc.getEquipUuid(), equipInstLoc.getSiteInfoIdx() ,target, now);
@@ -219,7 +217,7 @@ public class RainGaugeSendService {
 		return resultMap;
 	}
 	
-	private Long transmitLog(String equipUuid, String formattedDateTime, String number,
+	private Long transmitLog(String equipUuid, String formattedDateTime, String onsiteinfo,
 		Double rainGauge) {
 
 		LocalDateTime localDateTime = DateUtil.stringToLocalDateTime(formattedDateTime);
@@ -228,7 +226,7 @@ public class RainGaugeSendService {
 				RainSendLog.builder()
 				.equipUuid(equipUuid)
 				.rainSendDt(localDateTime)
-				.onSiteCode(number)
+				.onSiteCode(onsiteinfo)
 				.raingaugeSendDate(rainGauge)
 				.build() 
 				 );
