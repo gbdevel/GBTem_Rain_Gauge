@@ -149,7 +149,7 @@ public class RainGaugeSendService {
 			LocalDateTime now = LocalDateTime.now().minusMinutes(2);
 			LocalDateTime target = now.minusMinutes(7);
 			
-			Optional<EquipInstLocation> equipInstLocation = equipmentInstLocRepository.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYnAndOnSiteCodeIsNotNull(equipement.getEquipUuid(), today, "Y");
+			Optional<EquipInstLocation> equipInstLocation = equipmentInstLocRepository.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYn(equipement.getEquipUuid(), today, "Y");
 			
 			if(!equipInstLocation.isPresent()) {
 				continue;
