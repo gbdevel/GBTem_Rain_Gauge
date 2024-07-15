@@ -28,9 +28,8 @@ logging:
       type:
         descriptor.sql: trace
 
-
 dlInterface:
-  auth_url: https://apitest.dlenc.co.kr/dgw20-30/oauth/create
-  client_id: 7d44f21066a68985
-  client_secret: ed5a2b0f83b37ea00cd977c8b5d8d5294ce33f08777bc76b9a4666e5d81ef191
-  transmit_url: https://apitest.dlenc.co.kr/dgw20-30/400067
+  auth_url: https://api.dlenc.co.kr/dgw20-30/oauth/create
+  client_id: 854676b9e6abdcd6
+  client_secret: d5c9de61656e226fc4a783bd50d74ec1b8a1c2138db2b7f2f41495101289439b
+  transmit_url: https://api.dlenc.co.kr/dgw20-30/400067
