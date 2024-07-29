@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gbsoft.rainfallcollector.controller.request.DLTransmitRequest;
 import com.gbsoft.rainfallcollector.controller.request.InitEquipmentRequest;
-import com.gbsoft.rainfallcollector.controller.request.InitTerminalRequest;
 import com.gbsoft.rainfallcollector.controller.request.RagEquipmentRequest;
 import com.gbsoft.rainfallcollector.controller.request.RainRecvDateRequest;
 import com.gbsoft.rainfallcollector.controller.request.RebootEquipmentRequest;
