@@ -173,7 +173,7 @@ public class RainGaugeSendService {
 				sum.updateAndGet(v -> v + r.getRainGauge());
 			});
 
-			if(sum.get() >= 4.0){
+			if(sum.get() > 0.0){
 				double aaa = sum.get() * 12; // aaa 변수명 추후 변경할 것
 				sum.set(aaa);
 			}
