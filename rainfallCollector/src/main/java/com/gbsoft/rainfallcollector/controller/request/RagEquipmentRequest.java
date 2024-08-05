@@ -1,5 +1,6 @@
 package com.gbsoft.rainfallcollector.controller.request;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -13,10 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public class RagEquipmentRequest {
 
-	@NotNull(message = "필수값 입니다.")
+	@NotEmpty(message = "macAddress는 필수값 입니다.")
 	private String macAddress;
 
-	@NotNull(message = "필수값 입니다.")
+	@NotEmpty(message = "equipType은 필수값 입니다.")
 	private String equipType;
 	
 	private String equipName;
