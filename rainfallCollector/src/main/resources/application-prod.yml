@@ -24,9 +24,10 @@ spring:
 
 logging:
   level:
+    root: warn
     org.hibernate:
       type:
-        descriptor.sql: trace
+        descriptor.sql: warn
 
 dlInterface:
   auth_url: https://api.dlenc.co.kr/dgw20-30/oauth/create
