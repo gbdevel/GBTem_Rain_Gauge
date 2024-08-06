@@ -36,7 +36,7 @@ public class RainGaugeService {
 
 		LocalDate localDate = DateUtil.stringToLocalDate(rainRecvDateRequest.getRainGaugeSendDate());
 		
-		EquipInstLocation equipInstLocation = equipmentInstLocRepository
+		EquipInstLocation equipInstLocation =  equipmentInstLocRepository
 				.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYn(rainRecvDateRequest.getEquipUuid(), localDate, "Y")
 				.orElseThrow(OnSiteNotFoundException::new);
 			
