@@ -24,13 +24,15 @@ spring:
 
 logging:
   level:
+    root: warn
     org.hibernate:
       type:
-        descriptor.sql: trace
+        descriptor.sql: warn
 
 
+# 추후 테스트로 변경 할 것 client_id, client_secret
 dlInterface:
-  auth_url: https://apitest.dlenc.co.kr/dgw20-30/oauth/create
+  auth_url: https://api.dlenc.co.kr/dgw20-30/oauth/create
   client_id: 7d44f21066a68985
   client_secret: ed5a2b0f83b37ea00cd977c8b5d8d5294ce33f08777bc76b9a4666e5d81ef191
-  transmit_url: https://apitest.dlenc.co.kr/dgw20-30/400067
+  transmit_url: https://api.dlenc.co.kr/dgw20-30/400067
