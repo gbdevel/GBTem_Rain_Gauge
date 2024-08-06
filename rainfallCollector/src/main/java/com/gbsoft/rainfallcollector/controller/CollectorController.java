@@ -121,8 +121,7 @@ public class CollectorController {
         }
     }
 
-
-    @PostMapping("/rgsend")
+   @PostMapping("/rgsend")
     public ResponseEntity<? extends CommonResponse> rainRecv(
 //		@RequestBody @Valid SaveRainfallDataRequest saveRaindfallDataRequest,
             @RequestBody @Valid RainRecvDateRequest rainRecvDateRequest,

@@ -35,8 +35,6 @@ import com.gbsoft.rainfallcollector.domain.EquipByCust;
 import com.gbsoft.rainfallcollector.domain.EquipInstLocation;
 import com.gbsoft.rainfallcollector.domain.RainRecvDate;
 import com.gbsoft.rainfallcollector.domain.RainSendLog;
-import com.gbsoft.rainfallcollector.domain.Terminal;
-import com.gbsoft.rainfallcollector.exception.OnSiteNotFoundException;
 import com.gbsoft.rainfallcollector.repository.EquipByCustRepository;
 import com.gbsoft.rainfallcollector.repository.EquipmentInstLocRepository;
 import com.gbsoft.rainfallcollector.repository.RainRecvDateRepository;
@@ -108,7 +106,7 @@ public class RainGaugeSendService {
 			String stringFormatNowDatetime = DateUtil.localDateTimeToString(LocalDateTime.now());
 			if(!equipment.getSiteInfoIdx().getSiteCd().isEmpty()) {
 				Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getSiteInfoIdx().getSiteCd(), rainGauge);
-	
+
 	//			log.info("build : {}", build);
 				Map<String, String> map = new HashMap<>();
 				map.put("P_CD_RAF_EQPT", equipment.getEquipUuid());
@@ -117,11 +115,11 @@ public class RainGaugeSendService {
 				map.put("P_QT_RAF", String.valueOf(rainGauge));
 				map.put("P_CD_SITE", equipment.getSiteInfoIdx().getSiteCd());
 				HttpEntity request = makeTransmitHttpEntity(map, token);
-	
+
 				ResponseEntity<ResponseBodyDto> response = restTemplate.postForEntity(uri, request, ResponseBodyDto.class);
-	
+
 				checkTransmitLogSuccess(logingId);
-	
+
 				makeResultMap(response);
 
 			}
@@ -172,11 +170,6 @@ public class RainGaugeSendService {
 			list.forEach(r -> {
 				sum.updateAndGet(v -> v + r.getRainGauge());
 			});
-
-//			if(sum.get() >= 0.0){
-//				double aaa = sum.get() * 12; // aaa 변수명 추후 변경할 것
-//				sum.set(aaa);
-//			}
 
 			equipDoubleHashMap.put(equipInstLoc, sum.get());
 		}
