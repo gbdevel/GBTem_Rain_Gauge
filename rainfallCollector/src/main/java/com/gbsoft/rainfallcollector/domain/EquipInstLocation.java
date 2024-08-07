@@ -71,6 +71,8 @@ public class EquipInstLocation extends BaseEntity{
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "equipInstLocSeq")
 	@Builder.Default
 	private List<RainRecvDate> rainRecvDate = new ArrayList<>();
+
+	private boolean modify;
 	
 	public List<RainRecvDate> getRainRecvDate() {
 		return rainRecvDate;
@@ -79,6 +81,8 @@ public class EquipInstLocation extends BaseEntity{
 	public void setRainRecvDate(List<RainRecvDate> rainRecvDate) {
 		this.rainRecvDate = rainRecvDate;
 	}
-	
-	
+
+	public void changeModify() {
+		modify = true;
+	}
 }

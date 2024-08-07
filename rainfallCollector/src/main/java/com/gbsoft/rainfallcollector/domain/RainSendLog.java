@@ -47,8 +47,14 @@ public class RainSendLog extends BaseEntity {
 	@Column(name = "SUCCESS_YN")
 	private boolean successYn;
 
-	public void transmitSuccessCheck() {
+	@Column(name = "MODIFY_YN")
+	private boolean modifyYn;
+
+	public void transmitSuccessCheck(EquipInstLocation equipment) {
 		this.successYn = true;
 		this.rainSendDt = LocalDateTime.now();
+		if (equipment.isModify()) {
+			this.modifyYn = true;
+		}
 	}
 }

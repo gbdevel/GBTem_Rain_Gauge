@@ -52,111 +52,111 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class RainGaugeSendService {
 
-	private final EquipByCustRepository equipByCustRepository;
-	
-	private final RainRecvDateRepository rainRecvDateRepository;
-	
-	private final RainSendLogRepository rainSendLogRepository;
-	
-	private final EquipmentInstLocRepository equipmentInstLocRepository;
-	
-	public String authDL() {
+    private final EquipByCustRepository equipByCustRepository;
 
-		log.info("auth info ====");
-		log.info("URL : {}",  authUrl);
-		log.info("client_id : {}",  clientId);
-		log.info("client_secret : {}",  clientSecret);
+    private final RainRecvDateRepository rainRecvDateRepository;
 
-		RestTemplate restTemplate = generateRestTemplate();
-		String uri = makeUri(authUrl);
+    private final RainSendLogRepository rainSendLogRepository;
 
-		DLAuthRequest dlAuthRequest = DLAuthRequest.builder()
-													.grant_type(grantType)
-													.client_id(clientId)
-													.client_secret(clientSecret)
-													.scope(scope)
-													.build();
-		HttpEntity httpEntity = makeHttpEntity(dlAuthRequest);
+    private final EquipmentInstLocRepository equipmentInstLocRepository;
 
-		try {
-			ResponseEntity<AuthResponseBodyDto> response = restTemplate.postForEntity(uri, httpEntity, AuthResponseBodyDto.class);
-			HashMap<String, Object> resultMap = makeResultMap(response);
+    public String authDL() {
 
-			return response.getBody().getToken().getAccess_token();
+        log.info("auth info ====");
+        log.info("URL : {}", authUrl);
+        log.info("client_id : {}", clientId);
+        log.info("client_secret : {}", clientSecret);
 
-		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/**
-	 * 5분 주기로 강우량 데이터를 DL로 전송한다.
-	 */
-	@Transactional
-	public DLTransmitRequest transmit(String token, EquipInstLocation equipment, Double rainGauge) {
+        RestTemplate restTemplate = generateRestTemplate();
+        String uri = makeUri(authUrl);
 
-		try {
+        DLAuthRequest dlAuthRequest = DLAuthRequest.builder()
+                .grant_type(grantType)
+                .client_id(clientId)
+                .client_secret(clientSecret)
+                .scope(scope)
+                .build();
+        HttpEntity httpEntity = makeHttpEntity(dlAuthRequest);
 
-			RestTemplate restTemplate = generateRestTemplate();
-			String uri = makeUri(transmitUrl);
+        try {
+            ResponseEntity<AuthResponseBodyDto> response = restTemplate.postForEntity(uri, httpEntity, AuthResponseBodyDto.class);
+            HashMap<String, Object> resultMap = makeResultMap(response);
 
-			String stringFormatNowDatetime = DateUtil.localDateTimeToString(LocalDateTime.now());
-			if(!equipment.getSiteInfoIdx().getSiteCd().isEmpty()) {
-				Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getSiteInfoIdx().getSiteCd(), rainGauge);
+            return response.getBody().getToken().getAccess_token();
 
-	//			log.info("build : {}", build);
-				Map<String, String> map = new HashMap<>();
-				map.put("P_CD_RAF_EQPT", equipment.getEquipUuid());
-				map.put("P_DNT_MSMT", stringFormatNowDatetime);
-				map.put("P_NO_SEQ", String.valueOf(logingId));
-				map.put("P_QT_RAF", String.valueOf(rainGauge));
-				map.put("P_CD_SITE", equipment.getSiteInfoIdx().getSiteCd());
-				HttpEntity request = makeTransmitHttpEntity(map, token);
+        } catch (HttpClientErrorException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-				ResponseEntity<ResponseBodyDto> response = restTemplate.postForEntity(uri, request, ResponseBodyDto.class);
+    /**
+     * 5분 주기로 강우량 데이터를 DL로 전송한다.
+     */
+    @Transactional
+    public DLTransmitRequest transmit(String token, EquipInstLocation equipment, Double rainGauge) {
 
-				checkTransmitLogSuccess(logingId);
+        try {
 
-				makeResultMap(response);
+            RestTemplate restTemplate = generateRestTemplate();
+            String uri = makeUri(transmitUrl);
 
-			}
-		} catch (HttpClientErrorException e) {
-			if (e.getStatusCode().value() == HttpStatus.SC_UNAUTHORIZED) {
-				String accessToken = authDL();
-				transmit(accessToken, equipment, rainGauge); // 재전송.
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public HashMap<EquipInstLocation, Double> findAllEquipmentRainRecvDate() {
+            String stringFormatNowDatetime = DateUtil.localDateTimeToString(LocalDateTime.now());
+            if (!equipment.getSiteInfoIdx().getSiteCd().isEmpty()) {
+                Long logingId = transmitLog(equipment.getEquipUuid(), stringFormatNowDatetime, equipment.getSiteInfoIdx().getSiteCd(), rainGauge);
 
-		HashMap<EquipInstLocation, Double> equipDoubleHashMap = new HashMap<>();
-		
-		LocalDate today = LocalDate.now();
-		
-		List<EquipByCust> equipements = equipByCustRepository.findByCustSeqAndEcEndDtGreaterThanEqualAndUseYn("1", today, "Y");
+                //			log.info("build : {}", build);
+                Map<String, String> map = new HashMap<>();
+                map.put("P_CD_RAF_EQPT", equipment.getEquipUuid());
+                map.put("P_DNT_MSMT", stringFormatNowDatetime);
+                map.put("P_NO_SEQ", String.valueOf(logingId));
+                map.put("P_QT_RAF", String.valueOf(rainGauge));
+                map.put("P_CD_SITE", equipment.getSiteInfoIdx().getSiteCd());
+                HttpEntity request = makeTransmitHttpEntity(map, token);
 
-		
-		for (int i = 0; i < equipements.size(); i++) {
-			EquipByCust equipement = equipements.get(i);
-			LocalDateTime now = LocalDateTime.now().minusMinutes(2);
-			LocalDateTime target = now.minusMinutes(7);
-			
-			Optional<EquipInstLocation> equipInstLocation = equipmentInstLocRepository.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYn(equipement.getEquipUuid(), today, "Y");
-			
-			if(!equipInstLocation.isPresent()) {
-				continue;
-			}
+                ResponseEntity<ResponseBodyDto> response = restTemplate.postForEntity(uri, request, ResponseBodyDto.class);
 
-			EquipInstLocation equipInstLoc = equipInstLocation.get();
-			
-			List<RainRecvDate> list = rainRecvDateRepository.findByEquipUuidAndSiteInfoIdxAndRainRecvDtBetween(equipInstLoc.getEquipUuid(), equipInstLoc.getSiteInfoIdx() ,target, now);
+                checkTransmitLogSuccess(logingId, equipment);
+
+                makeResultMap(response);
+
+            }
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().value() == HttpStatus.SC_UNAUTHORIZED) {
+                String accessToken = authDL();
+                transmit(accessToken, equipment, rainGauge); // 재전송.
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public HashMap<EquipInstLocation, Double> findAllEquipmentRainRecvDate() {
+
+        HashMap<EquipInstLocation, Double> equipDoubleHashMap = new HashMap<>();
+
+        LocalDate today = LocalDate.now();
+
+        List<EquipByCust> equipements = equipByCustRepository.findByCustSeqAndEcEndDtGreaterThanEqualAndUseYn("1", today, "Y");
+
+
+        for (int i = 0; i < equipements.size(); i++) {
+            EquipByCust equipement = equipements.get(i);
+            LocalDateTime now = LocalDateTime.now().minusMinutes(2);
+            LocalDateTime target = now.minusMinutes(7);
+
+            Optional<EquipInstLocation> equipInstLocation = equipmentInstLocRepository.findByEquipUuidAndInstLocEndDtGreaterThanEqualAndUseYn(equipement.getEquipUuid(), today, "Y");
+
+            if (!equipInstLocation.isPresent()) {
+                continue;
+            }
+
+            EquipInstLocation equipInstLoc = equipInstLocation.get();
+
+            List<RainRecvDate> list = rainRecvDateRepository.findByEquipUuidAndSiteInfoIdxAndRainRecvDtBetween(equipInstLoc.getEquipUuid(), equipInstLoc.getSiteInfoIdx(), target, now);
 
 			/* 2024-02-08 안재욱 매니저 요청. 데이터 없어도 일단 0 전송하도록 처리.
 			트렌젝션 처리 안되어있어서 powerOff 안되고 있으.ㅁ
@@ -166,88 +166,98 @@ public class RainGaugeSendService {
 			}
 			*/
 
-			AtomicReference<Double> sum = new AtomicReference<>((double)0);
-			list.forEach(r -> {
-				sum.updateAndGet(v -> v + r.getRainGauge());
-			});
+            AtomicReference<Double> sum = new AtomicReference<>((double) 0);
+            list.forEach(r -> {
+                sum.updateAndGet(v -> v + r.getRainGauge());
+            });
 
-			equipDoubleHashMap.put(equipInstLoc, sum.get());
-		}
+            equipDoubleHashMap.put(equipInstLoc, pointFiveToZero(sum, equipInstLoc));
+        }
 
-		return equipDoubleHashMap;
-	}
-	
-	
-	private RestTemplate generateRestTemplate() {
+        return equipDoubleHashMap;
+    }
 
-		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-		factory.setConnectTimeout(5000);
-		factory.setReadTimeout(5000);
+    private double pointFiveToZero(AtomicReference<Double> sum, EquipInstLocation equipInstLoc) {
+        if (sum.get() == 0.5) {
+            //강우량 데이터 수정 여부
+            equipInstLoc.changeModify();
+            return 0;
+        }
 
-		CloseableHttpClient httpClient = HttpClientBuilder.create()
-			.setMaxConnTotal(50)
-			.setMaxConnPerRoute(20)
-			.build();
-
-		factory.setHttpClient(httpClient);
-
-		return new RestTemplate(factory);
-	}
-	
-	private String makeUri(String url) {
-		return UriComponentsBuilder.fromHttpUrl(url)
-			.build(false)
-			.toString();
-	}
-	
-	private HttpEntity makeHttpEntity(Object request) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+        return sum.get();
+    }
 
 
-		return new HttpEntity<>(request, headers);
-	}
+    private RestTemplate generateRestTemplate() {
 
-	private HashMap<String, Object> makeResultMap(ResponseEntity response) {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectTimeout(5000);
+        factory.setReadTimeout(5000);
 
-		resultMap.put("statusCode", response.getStatusCodeValue());
-		resultMap.put("header", response.getHeaders());
-		resultMap.put("body", response.getBody());
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
+                .setMaxConnTotal(50)
+                .setMaxConnPerRoute(20)
+                .build();
 
-		return resultMap;
-	}
-	
-	private Long transmitLog(String equipUuid, String formattedDateTime, String number,
-		Double rainGauge) {
+        factory.setHttpClient(httpClient);
 
-		LocalDateTime localDateTime = DateUtil.stringToLocalDateTime(formattedDateTime);
+        return new RestTemplate(factory);
+    }
 
-		RainSendLog sendDl = rainSendLogRepository.save(
-				RainSendLog.builder()
-				.equipUuid(equipUuid)
-				.rainSendDt(localDateTime)
-				.onSiteCode(number)
-				.raingaugeSendDate(rainGauge)
-				.build()
-				 );
-				
-		return sendDl.getRainSendLogdateSeq();
-	}
-	
-	private HttpEntity makeTransmitHttpEntity(Map<String, String> build, String token) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.add("Authorization", "Bearer " + token);
+    private String makeUri(String url) {
+        return UriComponentsBuilder.fromHttpUrl(url)
+                .build(false)
+                .toString();
+    }
 
-		return new HttpEntity<>(build, headers);
-	}
-	
-	private void checkTransmitLogSuccess(Long id) {
-		RainSendLog rainGaugeSendLog = rainSendLogRepository.findById(id)
-			.orElseThrow(RuntimeException::new);
+    private HttpEntity makeHttpEntity(Object request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-		rainGaugeSendLog.transmitSuccessCheck();
-	}
+
+        return new HttpEntity<>(request, headers);
+    }
+
+    private HashMap<String, Object> makeResultMap(ResponseEntity response) {
+        HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+        resultMap.put("statusCode", response.getStatusCodeValue());
+        resultMap.put("header", response.getHeaders());
+        resultMap.put("body", response.getBody());
+
+        return resultMap;
+    }
+
+    private Long transmitLog(String equipUuid, String formattedDateTime, String number,
+                             Double rainGauge) {
+
+        LocalDateTime localDateTime = DateUtil.stringToLocalDateTime(formattedDateTime);
+
+        RainSendLog sendDl = rainSendLogRepository.save(
+                RainSendLog.builder()
+                        .equipUuid(equipUuid)
+                        .rainSendDt(localDateTime)
+                        .onSiteCode(number)
+                        .raingaugeSendDate(rainGauge)
+                        .build()
+        );
+
+        return sendDl.getRainSendLogdateSeq();
+    }
+
+    private HttpEntity makeTransmitHttpEntity(Map<String, String> build, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + token);
+
+        return new HttpEntity<>(build, headers);
+    }
+
+    private void checkTransmitLogSuccess(Long id, EquipInstLocation equipment) {
+        RainSendLog rainGaugeSendLog = rainSendLogRepository.findById(id)
+                .orElseThrow(RuntimeException::new);
+
+        rainGaugeSendLog.transmitSuccessCheck(equipment);
+    }
 
 }
