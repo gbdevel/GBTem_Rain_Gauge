@@ -43,7 +43,7 @@ public class ScheduledService {
 	}
 	
 
-	@Scheduled(cron = "0 */5 * * * *") // 정각을 기준으로 5분 마다 실행함.
+//	@Scheduled(cron = "0 */5 * * * *") // 정각을 기준으로 5분 마다 실행함.
 	public void rainGaugeSendDate() {
 
 		String accessToken = rainGaugeSendService.authDL();
