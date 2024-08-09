@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.gbsoft.rainfallcollector.domain.AuditorAwareImpl;
 
-@Profile("prod")
+//@Profile("prod")
 @EnableScheduling
 @EnableJpaAuditing(auditorAwareRef="auditorProvider")
 @SpringBootApplication
