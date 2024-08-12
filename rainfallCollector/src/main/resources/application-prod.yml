@@ -34,3 +34,6 @@ dlInterface:
   client_id: 854676b9e6abdcd6
   client_secret: d5c9de61656e226fc4a783bd50d74ec1b8a1c2138db2b7f2f41495101289439b
   transmit_url: https://api.dlenc.co.kr/dgw20-30/400067
+
+envrioment:
+  property: true

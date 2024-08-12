@@ -27,3 +27,6 @@ logging:
     org.hibernate:
       type:
         descriptor.sql: trace
+
+envrioment:
+  property: false
