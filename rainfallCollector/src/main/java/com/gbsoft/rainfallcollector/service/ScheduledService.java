@@ -3,6 +3,7 @@ package com.gbsoft.rainfallcollector.service;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,42 +19,43 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ScheduledService {
 
-	private static final Integer CYCLE = 5;
+    private static final Integer CYCLE = 5;
 
-	private final RainfallService rainfallService;
+    private final RainfallService rainfallService;
 
-	private final TerminalService terminalService;
-	
-	private final RainGaugeSendService rainGaugeSendService;
-	
+    private final TerminalService terminalService;
 
-//	@Scheduled(cron = "0 */5 * * * *") // 정각을 기준으로 5분 마다 실행함./
-	public void scheduleTaskUsingCronExpression() {
-		//long now = System.currentTimeMillis() / 1000;
-		//log.info("schedule tasks using cron jobs - {}", now);
+    private final RainGaugeSendService rainGaugeSendService;
 
-		String accessToken = rainfallService.authDL();
 
-		Map<Terminal, Double> allTerminalRainfall = rainfallService.findAllTerminalRainfall(CYCLE);
+    @Value("${envrioment.property}")
+    private boolean property;
 
-		allTerminalRainfall.forEach((terminal, rainfall) -> {
-			rainfallService.transmit(accessToken, terminal, rainfall);
-		});
+    //	@Scheduled(cron = "0 */5 * * * *") // 정각을 기준으로 5분 마다 실행함./
+    public void scheduleTaskUsingCronExpression() {
+        //long now = System.currentTimeMillis() / 1000;
+        //log.info("schedule tasks using cron jobs - {}", now);
 
-	}
-	
+        String accessToken = rainfallService.authDL();
 
-	@Scheduled(cron = "0 */5 * * * *") // 정각을 기준으로 5분 마다 실행함.
-	public void rainGaugeSendDate() {
+        Map<Terminal, Double> allTerminalRainfall = rainfallService.findAllTerminalRainfall(CYCLE);
 
-		String accessToken = rainGaugeSendService.authDL();
+        allTerminalRainfall.forEach((terminal, rainfall) -> {
+            rainfallService.transmit(accessToken, terminal, rainfall);
+        });
 
-		Map<EquipInstLocation, Double> allTerminalRainfall = rainGaugeSendService.findAllEquipmentRainRecvDate();
+    }
 
-		allTerminalRainfall.forEach((equipment, rainGauge) -> {
-			
-			rainGaugeSendService.transmit(accessToken, equipment, rainGauge);
-		});
 
-	}
+    @Scheduled(cron = "0 */5 * * * *") // 정각을 기준으로 5분 마다 실행함.
+    public void rainGaugeSendDate() {
+        if (property) {
+            String accessToken = rainGaugeSendService.authDL();
+            Map<EquipInstLocation, Double> allTerminalRainfall = rainGaugeSendService.findAllEquipmentRainRecvDate();
+
+            allTerminalRainfall.forEach((equipment, rainGauge) -> {
+                rainGaugeSendService.transmit(accessToken, equipment, rainGauge);
+            });
+        }
+    }
 }
