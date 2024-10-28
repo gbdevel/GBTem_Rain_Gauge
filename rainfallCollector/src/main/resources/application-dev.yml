@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mariadb://gb-gblite-dev-rds.cww5ax3bcsku.ap-northeast-2.rds.amazonaws.com:3306/GBTEM
+    url: jdbc:mariadb://10.100.30.61:3306/GBTEM
     driver-class-name: org.mariadb.jdbc.Driver
     username: gbadmin
     password: wlqlthvmxm1!
