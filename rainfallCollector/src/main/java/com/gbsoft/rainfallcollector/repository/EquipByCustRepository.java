@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.gbsoft.rainfallcollector.domain.EquipByCust;
 
 
+
 public interface EquipByCustRepository extends JpaRepository<EquipByCust, Long>{
 	
 	Optional<EquipByCust> findByEquipUuidAndMacaddressAndEcEndDtGreaterThanEqualAndUseYn(String equipUuid, String macaddress, LocalDate localDateTime, String useYn);
