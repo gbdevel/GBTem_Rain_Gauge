@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mariadb://gb-sealcure-prd-rds.chje4j1rtvtm.ap-northeast-2.rds.amazonaws.com:3306/sealcure
+    url: jdbc:mariadb://172.31.30.101:3306/sealcure
     driver-class-name: org.mariadb.jdbc.Driver
     username: gbadmin
     password: wlqlthvmxm1!
